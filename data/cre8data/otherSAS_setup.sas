@@ -66,8 +66,8 @@ data _null_;
 	end;
 run;
 
-* Holds the path specified from the this program and stores it in a new macro variable. *;
-* If this program was used, it will use this path in the cre8data program.              *;
+* Holds the path specified from the this program and stores it in a new macro variable.      *;
+* If this program was used, it will use this path in the cre8data program from the zip file. *;
 %let _createdataEPGXLM_used_ = %superq(path);
 
 

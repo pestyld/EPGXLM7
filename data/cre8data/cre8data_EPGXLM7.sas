@@ -3,9 +3,9 @@
 * DATE CREATED:2/17/2023                                                                      *;
 * DESCRIPTION:                                                                                *;
 *     - VIRTUAL LAB: Simply run this program to create the data and libname.sas program.      *;
-*     - OTHER ENVIRONMENTS: The createCourseFiles_EPGXLM7.sas downloads the course zip file   *;
+*     - OTHER ENVIRONMENTS: The otherSAS_setup.sas downloads the course zip file              *;
 *       from the internet and unpacks the zip file with all course folders and SAS programs.  *; 
-*       A path is specified in the createCourseFiles_EPGXLM7.sas and then runs this program   *;
+*       A path is specified in the otherSAS_setup.sas and then runs this program              *;
 *       at the end to create the course data and libname.sas program.                         *;  
 *         a. (Required) USER HAS WRITE ACCESS to the SAS server                               *; 
 *         B. (not supported) USER DOES NOT HAVE WRITE ACCCESS to the SAS server.              *;
@@ -24,7 +24,7 @@
 * REQUIREMENTS:                                                                               *;
 *  - Virtual lab: Course data must be in S:/workshop.                                         *;
 *  - Other environments (write) : User must have write access to the SAS server and ONLY run  *;
-*                                 createCourseFiles_EPGXLM7.sas program.                      *;
+*                                 otherSAS_setup.sas program.                                 *;
 *  - Other environments (no write access) : If user does not have write access to the SAS     *;
 *                                           server you will need to contact your system admin.*;                                    *;
 ***********************************************************************************************;
@@ -35,8 +35,8 @@
 
 
 
-
-%let path=s:/workshop;
+/*  */
+/* %let path=s:/workshopx; */
 
 
 **************************************************************************************************;
@@ -47,7 +47,7 @@
 **************************************************************************************************;
 %macro checkPathMacroVariable;
 
-/* Check to see if the path macro variable is set. If it's not set use s:/workshop */
+/* Check to see if the path macro variable is set. If it's not set use s:/workshop default for virtual labs */
 %if %symexist(path) = 0 %then %do;
 	%let path = S:/workshop;
 	%put NOTE: ***********************************************************************************;
@@ -56,7 +56,7 @@
 	%put NOTE: ***********************************************************************************;
 %end;
 %else %do; /* If it's already set, keep that location */
-	%put NOTE: Path macro variable found. Will use the folder &path as the course folder.;
+	%put NOTE: Path macro variable found. Will use the folder path &path as the course folder location.;
 %end;
 
 /* Check to see if that the path specified valid? */
@@ -66,10 +66,13 @@
 %if &pathExists = 0 %then %do;
    	%put %sysfunc(sysmsg());
    	%put ERROR: ***********************************************************************************;
-   	%put ERROR- Path specified for data files in (%superq(path)) is not valid. ;
+   	%put ERROR: Path specified for data files in (%superq(path)) is not valid. ;
    	%put ERROR: ***********************************************************************************;
-   	%put ERROR- Remember: If you already have your course setup an are trying to recreate the data,;
-   	%put ERROR-           please run the libname.sas program first to set the path.;
+   	%put ERROR- NOTE: If you already have your course setup an are trying to recreate the course data,;
+   	%put ERROR-       please run the libname.sas program first to set the path of the course.;
+   	%put ERROR-       Then run this program.;
+    %put ERROR- OTHERWISE: The path that is specified is not valid. This can occur for a variety of reasons.;
+    %put ERROR-            Please retry the Using Other SAS Environments instructions provided with the course.; 	
    	%put ERROR- ************************************************************************************;
 	%abort cancel;
 %end;
@@ -116,16 +119,16 @@
 
 
 *************************************************************************************;
-* CHECK FOR createCourseFiles_EPGXLM7.sas PROGRAM TO CHANGE PATH IF NECESSARY       *;
+* CHECK FOR otherSAS_setup.sas PROGRAM TO CHANGE PATH IF NECESSARY                  *;
 *************************************************************************************;
-* Macro program tests to see if the createCourseFiles_EPGXLM7.sas program was used. *;
+* Macro program tests to see if the otherSAS_setup.sas program was used.            *;
 * If it was used, it changes the location of the path macro variable to the value   *;
-* _createdataEPGXLM_used_, which was created in the createCourseFiles_EPGXLM7.sas   *;
+* _createdataEPGXLM_used_, which was created in the otherSAS_setup.sas              *;
 * program. It holds the user's specified writable location.                         *;
 *************************************************************************************;
 %macro check_if_createdataEPGXLM();
        
-		* Test to see if the createCourseFiles_EPGXLM7.sas was used.  *;
+		* Test to see if the otherSAS_setup.sas was used.  *;
 		* If so, change the location of the path macro variable       *;
         %if %symexist(_createdataEPGXLM_used_) = 1 %then %do;
         	%let path=&_createdataEPGXLM_used_;
