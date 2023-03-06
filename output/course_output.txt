@@ -1,0 +1,2 @@
+- The output folder will be used for all newly created files.
+- The output folder can be referenced by executing the libname.sas program and using the outpath macro variable after the cre8data_EPGXLM7.sas program has been run.
