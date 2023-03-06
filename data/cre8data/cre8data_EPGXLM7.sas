@@ -36,15 +36,7 @@
 
 
 
-
-
-
-
-
-
-
-
-%let path = s:/workshop;
+%let path=s:/workshop;
 
 
 **************************************************************************************************;
@@ -73,12 +65,13 @@
 /* If path is not found, then return an error */
 %if &pathExists = 0 %then %do;
    	%put %sysfunc(sysmsg());
-   	%put ERROR: ************************************************************;
-   	%put ERROR- Path specified for data files (%superq(path)) is not valid. ;
-   	%put ERROR- Remember: PATH values in UNIX and LINUX are case sensitive. ;
-   	%put ERROR- Remember: If you already have your course setup an are trying to recreate the data. Please run the libname.sas program first.;
-   	%put ERROR- ************************************************************;
-	%return;
+   	%put ERROR: ***********************************************************************************;
+   	%put ERROR- Path specified for data files in (%superq(path)) is not valid. ;
+   	%put ERROR: ***********************************************************************************;
+   	%put ERROR- Remember: If you already have your course setup an are trying to recreate the data,;
+   	%put ERROR-           please run the libname.sas program first to set the path.;
+   	%put ERROR- ************************************************************************************;
+	%abort cancel;
 %end;
 %else %do; /* Return note confirming path exists */
 	%put NOTE: ***********************************************************************************;
@@ -92,33 +85,33 @@
 ;
 
 
-*************************************************;
-* CHECK FOR IBT/LW LAB OR ELEARNING LAB PATH    *;
-*************************************************;
-* IBT/LW - path is s:/workshop                  *;
-* eLearning - path is s:/workshop/coursecode    *;
-* Macro here determines which path to use       *;
-*************************************************;
-
-%macro virtual_lab_path(coursecode,          /* Course code used as the folder name in the elearning lab */
-                        programNameCheck);   /* The create data program that is being located            */
-
-	* Specify the eLearning course folder name *;
-	%let elearningCourseFolder = &coursecode;
-	
-	* Reference the cre8data.sas program in the DATA folder using the IBT/LW path *;
-	filename cre8data "&path/data/cre8data/&programNameCheck";
-
-	* Check to see if cre8data.sas is in the IBT/LW folder path. If not, change to elearning lab path *;
-	data _null_;
-		cre8data_exists = fexist('cre8data');
-		if cre8data_exists = 0 then call symputx('path',"&path./&elearningCourseFolder");
-	run;
-	
-	filename cre8data;
-%mend;
-
-%virtual_lab_path(EPGXLM7, cre8data_EPGXLM7.sas);
+/* *************************************************; */
+/* * CHECK FOR IBT/LW LAB OR ELEARNING LAB PATH    *; */
+/* *************************************************; */
+/* * IBT/LW - path is s:/workshop                  *; */
+/* * eLearning - path is s:/workshop/coursecode    *; */
+/* * Macro here determines which path to use       *; */
+/* *************************************************; */
+/*  */
+/* %macro virtual_lab_path(coursecode,          /* Course code used as the folder name in the elearning lab */
+/*                         programNameCheck);   /* The create data program that is being located            */
+/*  */
+/* 	* Specify the eLearning course folder name *; */
+/* 	%let elearningCourseFolder = &coursecode; */
+/* 	 */
+/* 	* Reference the cre8data.sas program in the DATA folder using the IBT/LW path *; */
+/* 	filename cre8data "&path/data/cre8data/&programNameCheck"; */
+/*  */
+/* 	* Check to see if cre8data.sas is in the IBT/LW folder path. If not, change to elearning lab path *; */
+/* 	data _null_; */
+/* 		cre8data_exists = fexist('cre8data'); */
+/* 		if cre8data_exists = 0 then call symputx('path',"&path./&elearningCourseFolder"); */
+/* 	run; */
+/* 	 */
+/* 	filename cre8data; */
+/* %mend; */
+/*  */
+/* %virtual_lab_path(EPGXLM7, cre8data_EPGXLM7.sas); */
 
 
 
@@ -493,10 +486,6 @@ run;
 **********************************;
 * Delete macro variables         *;
 **********************************;
-%if %symexist(EnterpriseGuideNoWriteAccess) = 1 %then %do;
-	%symdel EnterpriseGuideNoWriteAccess;
-    %put %str(NOTE: Deleted EnterpriseGuideNoWriteAccess);
-%end;
 %if %symexist(_createdataEPGXLM_used_) = 1 %then %do;
 	%symdel _createdataEPGXLM_used_;
     %put %str(NOTE: Deleted _createdataEPGXLM_used_);

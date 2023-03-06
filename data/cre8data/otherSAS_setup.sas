@@ -1,6 +1,11 @@
 ***********************************************************************************************;
 * COURSE: Working with SAS and Microsoft Excel (PGXLM7)                                       *;
 * DATE CREATED:2/17/2023                                                                      *;
+* SETUP: Creates the course data in the other SAS environments                                *;   
+*    - SAS OnDemand for Academics                                                             *;
+*    - SAS Viya for Learners and SAS Viya                                                     *;
+*    - SAS installed in a desktop                                                             *;
+*    - SAS installed on a server (write access required)                                      *;
 * DESCRIPTION:                                                                                *;
 *     - This createCourseFiles_EPGXLM7.sas program sets up your SAS environment to take this  *;
 *       course. The program downloads the course zip file from the internet and unpacks the   *;
@@ -11,11 +16,6 @@
 *         B. (Not supported) USER DOES NOT HAVE WRITE ACCCESS to the SAS server.              *;
 *            You will need to contact your system admin to get write access to a location on  *; 
 *            the SAS server.                                                                  *;
-* SETUP: Creates the course data in the following environments                                *;   
-*    - SAS OnDemand for Academics                                                             *;
-*    - SAS Viya for Learners and SAS Viya                                                     *;
-*    - SAS installed in a desktop                                                             *;
-*    - SAS installed on a server (write access required)                                      *;
 * FILE(S) CREATED:                                                                            *;
 *     1. folders: activities, data, demos, examples, output, practices                        *;
 *     2. program: libname.sas program (in the main course folder)                             *;
