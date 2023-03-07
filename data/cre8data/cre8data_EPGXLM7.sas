@@ -177,26 +177,13 @@ data _null_;
   	put 'libname pg "&path./data";';
 run;
 
-%include "&path/libname.sas";
-
 
 
 *************************************************;
 * CREATE MACRO VARIABLE FOR DATA FOLDER         *;
 *************************************************;
- %let datapath = &path./data; 
- libname pg "&datapath"; 
- 	
-/*  * Code if write access to SAS *;  */
-/*  %if %symexist(EnterpriseGuideNoWriteAccess) = 0 %then %do;  */
-/*  	%let datapath = &path./data;  */
-/*  	libname pg "&datapath";  */
-/*  %end;  */
-/*  %else %do; * Code if EG on desktop with no write access *;  */
-/*  	%let datapath = &tempDataPath;  */
-/*  	libname pg "&datapath";  */
-/*  %end;  */
-
+%let datapath = &path./data; 
+libname pg "&datapath"; 
 
 
 ******************************************;
@@ -499,6 +486,13 @@ libname xl clear;
 **********************************;
 proc contents data=pg._all_ nods;
 run;
+
+
+
+**********************************;
+* Execute libname.sas program    *;
+**********************************;
+%include "&path/libname.sas";
 
 
 **********************************;
