@@ -41,9 +41,10 @@
 * Test to see if the path macro variable is already set.                                         *;
 * If it is not set, assume a virtual lab is being used and set path to s:/workshop.              *;                                                      *;
 **************************************************************************************************;
+
 %macro PathMacroVariable;
 
-/* Check to see if the otherSAS_setup.sas program was used. */
+/* Check to see if the otherSAS_setup.sas program was used to unpack the course files in the user's environment. */
 %if %symexist(_otherSASSetupUsed_) = 1 %then %do;
 	%let path=&_otherSASSetupUsed_;
 	%put NOTE: OTHERSAS_SETUP.sas PROGRAM WAS USED.;
@@ -53,22 +54,23 @@
 	%put NOTE- &path;
 	%put NOTE- ***********************************************************************************;
 %end;
-%else %if %symexist(path) = 0 %then %do;
+%else %if %symexist(path) = 0 %then %do; /* If the path is not set, assume it's a virtual lab environment s:/workshop */
 	%let path = S:/workshop;
-	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB DEFAULT;
+	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB BY DEFAULT;
 	%put NOTE- ***********************************************************************************;
-	%put NOTE- Path macro variable not found. Assuming course is being taken in a SAS virtual lab.;
+	%put NOTE- Path macro was variable not found.;
+	%put NOTE- Assuming course is being taken in a SAS virtual lab.;
 	%put NOTE- The path macro variable will be set to the s:/workshop folder.;
 	%put NOTE- This is the default folder for the SAS virtual lab.;	
 	%put NOTE- ***********************************************************************************;
 %end;
-%else %do; /* If it's already set, keep that location */
-	%put NOTE: PATH MACRO VARIABLE FOUND
+%else %do; /* If the path macro variable is already set from the setup program or libname.sas program, keep it. */
+	%put NOTE: PATH MACRO VARIABLE FOUND;
 	%put NOTE- ***********************************************************************************;
-	%put NOTE- Path macro variable found.;
+	%put NOTE- The path macro variable was found.;
 	%PUT NOTE- Will use the folder path &path as the course folder location.;
 	%put NOTE- If this is not correct, please run the libname.sas program that was created;
-	%put NOTE- in the course setup instructions.;
+	%put NOTE- from the course setup instructions.;
 	%put NOTE- ***********************************************************************************;
 
 %end;
@@ -79,7 +81,8 @@
 /* If path is not found, then return an error */
 %if &pathExists = 0 %then %do;
    	%put %sysfunc(sysmsg());
-   	%put ERROR: ***********************************************************************************;
+   	%put ERROR: PATH MACRO VARIBLE SPECIFIES INVALID LOCATION;
+   	%put ERROR- ***********************************************************************************;
    	%put ERROR- Path specified for data files in (%superq(path)) is not valid. ;
    	%put ERROR- ***********************************************************************************;
    	%put ERROR- NOTE: If you already have your course setup and are trying to recreate the course data,;
@@ -91,9 +94,12 @@
 	%abort cancel;
 %end;
 %else %do; /* Return note confirming path exists */
-	%put NOTE: ***********************************************************************************;
-	%put NOTE- Confirmed that the following folder path exists: &path.;
-	%put NOTE- Since the folder path exists will attempt to create course data in &path.;
+	%put NOTE: CONFIMED PATH IS VALID LOCATION;
+	%put NOTE- ***********************************************************************************;
+	%put NOTE- Confirmed that the following folder path is a valid location:;
+	%put NOTE- &path.;
+	%put NOTE- Since the folder path exists, this program will attempt to create the course data 
+	%put NOTE- in &path/data.;
 	%put NOTE- ***********************************************************************************;
 %end;
 
@@ -505,3 +511,9 @@ run;
 	%symdel tempDataPath;
     %put %str(NOTE: Deleted tempDataPath);
 %end;
+
+
+**********************************;
+* Final notes                    *;
+**********************************;
+%put NOTE: The following path is used: &path;
