@@ -308,8 +308,8 @@ filename unzip;
 	%end;
 %end;
 
-/* * Execute cre8data.sas program from the data folder *; */
-/* %include "&cre8data_program"; */
+* Execute cre8data.sas program from the data folder *;
+%include "&cre8data_program";
 
 
 ***************************************************;
