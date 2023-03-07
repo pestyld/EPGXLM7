@@ -1,25 +1,25 @@
 ***********************************************************************************************;
 * COURSE: Working with SAS and Microsoft Excel (PGXLM7)                                       *;
 * DATE CREATED:2/17/2023                                                                      *;
-* SETUP: Creates the course data in the other SAS environments                                *;   
+* SETUP: Creates the course data in other SAS environments                                    *;   
 *    - SAS OnDemand for Academics                                                             *;
 *    - SAS Viya for Learners and SAS Viya                                                     *;
 *    - SAS installed in a desktop                                                             *;
 *    - SAS installed on a server (write access required)                                      *;
 * DESCRIPTION:                                                                                *;
-*     - This createCourseFiles_EPGXLM7.sas program sets up your SAS environment to take this  *;
-*       course. The program downloads the course zip file from the internet and unpacks the   *;
+*     - This SAS program sets up your SAS environment to take this course.                    *;
+*       The program downloads the course zip file from the internet and unpacks the           *;
 *       zip file with all course folders and SAS programs in the specified writable path      *;
 *       below. After all files are unpacked, the cre8data_EPGXLM7.sas program is executed and *;
-*       all data and the libname.sas program is created.                                      *;
-*         a. (Required) USER HAS WRITE ACCESS to specified path below on the SAS server       *;
-*         B. (Not supported) USER DOES NOT HAVE WRITE ACCCESS to the SAS server.              *;
-*            You will need to contact your system admin to get write access to a location on  *; 
+*       all data and the libname.sas program are created in the specified path.               *;
+*         a. (REQUIRED) USER HAS WRITE ACCESS to specified path below on the SAS server       *;
+*         B. (NOT SUPPORTED) USER DOES NOT HAVE WRITE ACCCESS to the SAS server.              *;
+*            You will need to contact your system admin to get write access to a location on  *;
 *            the SAS server.                                                                  *;
 * FILE(S) CREATED:                                                                            *;
 *     1. folders: activities, data, demos, examples, output, practices                        *;
 *     2. program: libname.sas program (in the main course folder)                             *;
-*     3. course data: 5 SAS data sets and 4 Excel workbooks (in the data folder)              *;                                                                         
+*     3. course data: 5 SAS data sets and 4 Excel workbooks (in the data folder)              *;
 * REQUIREMENTS:                                                                               *;
 *    - Specify a writable path on the SAS environment to unzip the course folders and files   *;
 *      to. If the folder path is not writable, an error will occur.                           *;
@@ -72,13 +72,6 @@ run;
 
 
 
-
-
-
-
-
-
-
 ************************************************************************************************************;
 *                                       CREATE UNPACK MACRO PROGRAM                                        *;
 ************************************************************************************************************;
@@ -87,10 +80,9 @@ run;
 
 
 %macro unpack(unzip,                       /* Full path pointing to where to create the course data */
-              zipfilename,                 /* ZIP File name (used when downloaded with PROC HTTP) */
+              zipfilename,                 /* ZIP file name and extension (used when downloaded with PROC HTTP) */
               urlzipdownload,              /* Git path to download the zip file */
               external_createdata=NONE);   /* External create data program to execute (clean up) */ 
-
 
 * Create global and local macro variables *;
 %local rc fid fileref fnum memname big_zip big_zip_found data_zip data_zip_found url;
@@ -131,7 +123,7 @@ run;
 
 
 *********************************************;
-* SET ZIP FILE NAME                         *;
+* GET JUST THE ZIP FILE NAME W/O EXTENSION  *;
 *********************************************;
 /* Get just the filename of the zipfile, not the .ZIP extension */
 %if %qscan(%qupcase(%superq(zipfilename)),2,.) = %str(ZIP) %then %do;
@@ -176,7 +168,8 @@ run;
       %put ERROR- If this is the case, please follow the instructions to manually download;
       %put ERROR- the zip file and upload it to your course folder. Then rerun this program.;
       %put ERROR- *******************************************************************;
-      %abort cancel;
+/*       %abort cancel; */
+      %return;
    %end;
    %else %do; /* Otherwise download the zip file to the specified path */
 	   filename BigZip "%superq(unzip)/%superq(zipfilename).zip";
@@ -306,10 +299,13 @@ filename unzip;
       %put ERROR- in folder %superq(_otherSASSetupUsed_).;
       %put ERROR- *************************************************************************;
 	%end;
+	%else %do;
+		* Execute cre8data.sas program from the data folder *;
+		%put NOTE: Execute external file:&cre8data_program;
+		%include "&cre8data_program";
+	%end;
 %end;
 
-* Execute cre8data.sas program from the data folder *;
-%include "&cre8data_program";
 
 
 ***************************************************;
@@ -320,9 +316,11 @@ filename unzip;
 %put NOTE:*************************************************************************;
 %put NOTE- OTHER SAS ENVIRONMENTS PROGRAM SUMMARY;
 %put NOTE-*************************************************************************;
+
 /* Where the course is being unpacked */
 %put NOTE- The course will be unpacked in: &_otherSASSetupUsed_;
 %put NOTE-*************************************************************************;
+
 /* Indicates that the zipfile was not found in the folder. Will download zip file */
 %if %symexist(zipfilenotfoundinpath) = 1 %then %do;
 	%put NOTE- &zipfilenotfoundinpath;
@@ -330,12 +328,15 @@ filename unzip;
 	%put NOTE- &urlzipdownload;
 	%put NOTE-*************************************************************************;
 %end;
+
+/* Indicates if the zip file was found in the path specified */
 %if %symexist(coursezipfilefound) = 1 %then %do;
 	%put NOTE- &coursezipfilefound;
 	%put NOTE- Will attempt to unpack the provided zip file.;
 	%put NOTE-*************************************************************************;
 %end;
 
+/* Indicates of an external file with the course zip file is required to be executed for course setup */
 %if %symexist(ExternalCreateData) = 1 %then %do;
 	%put NOTE- EXTERNAL COURSE SETUP FILE WILL BE EXECUTED;
 	%put NOTE- &ExternalCreateData;
@@ -352,7 +353,6 @@ filename unzip;
 ***********************************************;
 %if %symexist(_otherSASSetupUsed_) = 1 %then %do;
 	%symdel _otherSASSetupUsed_;
-    %put %str(NOTE: Deleted _otherSASSetupUsed_);
 %end;
 %mend unpack;
 
