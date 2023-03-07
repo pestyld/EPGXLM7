@@ -28,7 +28,7 @@
 ***********************************************************************************************;
 
 /* Replace FILEPATH with the full path to your EPGXLM7 folder */
-%let path = S:/newcoursesetup/test_3_07_2023_morenotes;
+%let path = FILENAME;
 
 *************************************************;
 * EXAMPLES                                      *;
