@@ -41,19 +41,36 @@
 * Test to see if the path macro variable is already set.                                         *;
 * If it is not set, assume a virtual lab is being used and set path to s:/workshop.              *;                                                      *;
 **************************************************************************************************;
-%macro checkPathMacroVariable;
+%macro PathMacroVariable;
 
-/* Check to see if the path macro variable is set. If it's not set use s:/workshop default for virtual labs */
-%if %symexist(path) = 0 %then %do;
+/* Check to see if the otherSAS_setup.sas program was used. */
+%if %symexist(_otherSASSetupUsed_) = 1 %then %do;
+	%let path=&_otherSASSetupUsed_;
+	%put NOTE: OTHERSAS_SETUP.sas PROGRAM WAS USED.;
+	%put NOTE- ***********************************************************************************;
+	%put NOTE- The otherSAS_setup.sas program was used.;
+	%put NOTE- The location of the path macro variable will be set to the following path:;
+	%put NOTE- &path;
+	%put NOTE- ***********************************************************************************;
+%end;
+%else %if %symexist(path) = 0 %then %do;
 	%let path = S:/workshop;
-	%put NOTE: ***********************************************************************************;
+	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB DEFAULT;
+	%put NOTE- ***********************************************************************************;
 	%put NOTE- Path macro variable not found. Assuming course is being taken in a SAS virtual lab.;
 	%put NOTE- The path macro variable will be set to the s:/workshop folder.;
 	%put NOTE- This is the default folder for the SAS virtual lab.;	
 	%put NOTE- ***********************************************************************************;
 %end;
 %else %do; /* If it's already set, keep that location */
-	%put NOTE: Path macro variable found. Will use the folder path &path as the course folder location.;
+	%put NOTE: PATH MACRO VARIABLE FOUND
+	%put NOTE- ***********************************************************************************;
+	%put NOTE- Path macro variable found.;
+	%PUT NOTE- Will use the folder path &path as the course folder location.;
+	%put NOTE- If this is not correct, please run the libname.sas program that was created;
+	%put NOTE- in the course setup instructions.;
+	%put NOTE- ***********************************************************************************;
+
 %end;
 
 /* Check to see if that the path specified valid? */
@@ -81,7 +98,7 @@
 %end;
 
 %mend;
-%checkPathMacroVariable
+%PathMacroVariable
 ;
 
 
@@ -123,25 +140,19 @@
 * _createdataEPGXLM_used_, which was created in the otherSAS_setup.sas              *;
 * program. It holds the user's specified writable location.                         *;
 *************************************************************************************;
-%macro check_if_createdataEPGXLM();
-       
-		* Test to see if the otherSAS_setup.sas was used.  *;
-		* If so, change the location of the path macro variable       *;
-        %if %symexist(_otherSASSetupUsed_) = 1 %then %do;
-        	%let path=&_otherSASSetupUsed_;
-        	%put %str(NOTE: The createdataEPGXLM.sas program was used to unpack all the files.);
-        	%put NOTE: Changed the location of the path macro variable to &_otherSASSetupUsed_;
-        %end;
-		%else %do; * Otherwise leave the path macro variable *;
-			%put %str(NOTE: The otherSAS_setup.sas program was not used.);
-			%put %str(NOTE: Using the path s:/workshop from the the virtual lab.);
-		%end;
-		
-		%put WARNING: &=path;
-		
-%mend check_if_createdataEPGXLM;
-
-%check_if_createdataEPGXLM();
+/* %macro check_if_createdataEPGXLM(); */
+/*         */
+/* 		* Test to see if the otherSAS_setup.sas was used.  *; */
+/* 		* If so, change the location of the path macro variable       *; */
+/*  */
+/* 		%else %do; * Otherwise leave the path macro variable *; */
+/* 			%put %str(NOTE: The otherSAS_setup.sas program was not used.); */
+/* 			%put %str(NOTE: Using the path s:/workshop from the the virtual lab.); */
+/* 		%end; */
+/* 		 */
+/* %mend check_if_createdataEPGXLM; */
+/*  */
+/* %check_if_createdataEPGXLM(); */
 
 
 
