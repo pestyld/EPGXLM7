@@ -66,6 +66,7 @@ data _null_;
 	end;
 run;
 
+
 * Holds the path specified from the this program and stores it in a new macro variable.      *;
 * If this program was used, it will use this path in the cre8data program from the zip file. *;
 %let _createdataEPGXLM_used_ = %superq(path);
@@ -78,9 +79,9 @@ run;
 ***************************************************************************;
 * Create unpack macro program                                             *;
 ***************************************************************************;
-%macro unpack(unzip /* Full path pointing to where to create the EPG2V2 data */
-             ,zipfilename /* ZIP File name (used to download with PROC HTTP) */
-             ,urlzipdownload);
+%macro unpack(unzip               /* Full path pointing to where to create the EPG2V2 data */
+             ,zipfilename         /* ZIP File name (used when downloaded with PROC HTTP) */
+             ,urlzipdownload);    /* Git path to download the zip file */
 
 
 * Create global and local macro variables *;
@@ -159,9 +160,9 @@ run;
 %end;
 %else %do; /* Note that the zip file was already found in the specified folder */
    	%put NOTE: *******************************************************************;
-	%put NOTE: course zip file %superq(zipfilename).zip was found in the specified;
-   	%put NOTE: path %superq(unzip). Will unpack this zip file for the course.     ;
-   	%put NOTE: *******************************************************************;
+	%put NOTE- course zip file %superq(zipfilename).zip was found in the specified;
+   	%put NOTE- path %superq(unzip). Will unpack this zip file for the course.     ;
+   	%put NOTE *******************************************************************;
 %end;
 
 
@@ -220,7 +221,7 @@ filename unzip;
 
 
 * Create a macro variable pointing to the 2_cre8data_other.sas program *;
-%let cre8data_program=%superq(unzip)/data/cre8data/cre8data_EPGXLM7.sas;
+%let cre8data_program=%superq(unzip)/%superq(zipfilename)/data/cre8data/cre8data_EPGXLM7.sas;
 
 * Check for a cre8data.sas program and execute. Return an error if not found *;
 %let cre8data_ready=%sysfunc(fileexist(%superq(cre8data_program)));
@@ -246,5 +247,5 @@ filename unzip;
  Execute the macro program to unzip the course data
 *************************************************************/
 %unpack(%superq(path), 
-		EPGXLM7.zip, 
-		https://github.com/pestyld/xls/raw/main/EPGXLM7.zip)
+		EPGXLM7-master.zip, 
+		https://github.com/pestyld/EPGXLM7/archive/refs/heads/master.zip)

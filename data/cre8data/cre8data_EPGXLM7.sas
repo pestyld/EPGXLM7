@@ -35,10 +35,6 @@
 
 
 
-/*  */
-/* %let path=s:/workshopx; */
-
-
 **************************************************************************************************;
 * INITIAL PATH MACRO VARIABLE                                                                    *;
 **************************************************************************************************;
@@ -51,9 +47,10 @@
 %if %symexist(path) = 0 %then %do;
 	%let path = S:/workshop;
 	%put NOTE: ***********************************************************************************;
-	%put NOTE: Path macro variable not found. Assuming course is being taken in a SAS virtual lab.;
-	%put NOTE: The path macro variable will be set to the s:/workshop folder. This is the default folder for the SAS virtual lab.;
-	%put NOTE: ***********************************************************************************;
+	%put NOTE- Path macro variable not found. Assuming course is being taken in a SAS virtual lab.;
+	%put NOTE- The path macro variable will be set to the s:/workshop folder.;
+	%put NOTE- This is the default folder for the SAS virtual lab.;	
+	%put NOTE- ***********************************************************************************;
 %end;
 %else %do; /* If it's already set, keep that location */
 	%put NOTE: Path macro variable found. Will use the folder path &path as the course folder location.;
@@ -66,11 +63,11 @@
 %if &pathExists = 0 %then %do;
    	%put %sysfunc(sysmsg());
    	%put ERROR: ***********************************************************************************;
-   	%put ERROR: Path specified for data files in (%superq(path)) is not valid. ;
-   	%put ERROR: ***********************************************************************************;
-   	%put ERROR- NOTE: If you already have your course setup an are trying to recreate the course data,;
-   	%put ERROR-       please run the libname.sas program first to set the path of the course.;
-   	%put ERROR-       Then run this program.;
+   	%put ERROR- Path specified for data files in (%superq(path)) is not valid. ;
+   	%put ERROR- ***********************************************************************************;
+   	%put ERROR- NOTE: If you already have your course setup and are trying to recreate the course data,;
+   	%put ERROR-       please run the libname.sas program first to set the path macro variable for the;
+   	%put ERROR-       course location. Then run this program.;
     %put ERROR- OTHERWISE: The path that is specified is not valid. This can occur for a variety of reasons.;
     %put ERROR-            Please retry the Using Other SAS Environments instructions provided with the course.; 	
    	%put ERROR- ************************************************************************************;
@@ -78,9 +75,9 @@
 %end;
 %else %do; /* Return note confirming path exists */
 	%put NOTE: ***********************************************************************************;
-	%put NOTE: Confirming the following folder path exists: &path.;
-	%put NOTE: The folder path does exists. Will attempt to create course data.;
-	%put NOTE: ***********************************************************************************;
+	%put NOTE- Confirmed that the following folder path exists: &path.;
+	%put NOTE- Since the folder path exists will attempt to create course data in &path.;
+	%put NOTE- ***********************************************************************************;
 %end;
 
 %mend;
@@ -130,17 +127,17 @@
        
 		* Test to see if the otherSAS_setup.sas was used.  *;
 		* If so, change the location of the path macro variable       *;
-        %if %symexist(_createdataEPGXLM_used_) = 1 %then %do;
-        	%let path=&_createdataEPGXLM_used_;
+        %if %symexist(_otherSASSetupUsed_) = 1 %then %do;
+        	%let path=&_otherSASSetupUsed_;
         	%put %str(NOTE: The createdataEPGXLM.sas program was used to unpack all the files.);
-        	%put NOTE: Changed the location of the path macro variable to &_createdataEPGXLM_used_;
+        	%put NOTE: Changed the location of the path macro variable to &_otherSASSetupUsed_;
         %end;
 		%else %do; * Otherwise leave the path macro variable *;
-			%put %str(NOTE: The createdataEPGXLM.sas program was not used.);
+			%put %str(NOTE: The otherSAS_setup.sas program was not used.);
 			%put %str(NOTE: Using the path s:/workshop from the the virtual lab.);
 		%end;
 		
-		%put &=path;
+		%put WARNING: &=path;
 		
 %mend check_if_createdataEPGXLM;
 
@@ -489,9 +486,9 @@ run;
 **********************************;
 * Delete macro variables         *;
 **********************************;
-%if %symexist(_createdataEPGXLM_used_) = 1 %then %do;
-	%symdel _createdataEPGXLM_used_;
-    %put %str(NOTE: Deleted _createdataEPGXLM_used_);
+%if %symexist(_otherSASSetupUsed_) = 1 %then %do;
+	%symdel _otherSASSetupUsed_;
+    %put %str(NOTE: Deleted _otherSASSetupUsed_);
 %end;
 %if %symexist(tempDataPath) = 1 %then %do;
 	%symdel tempDataPath;
