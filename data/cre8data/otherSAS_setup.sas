@@ -28,7 +28,7 @@
 ***********************************************************************************************;
 
 /* Replace FILEPATH with the full path to your EPGXLM7 folder */
-%let path = FILENAME;
+%let path = S:/newcoursesetup/test_3_07_2023_morenotes;
 
 *************************************************;
 * EXAMPLES                                      *;
@@ -344,6 +344,15 @@ filename unzip;
 %end;
 %else %do;
 	%put NOTE- &NoExternalCreateData;
+%end;
+
+
+***********************************************;
+* DELETE MACRO VARIABLES                      *;
+***********************************************;
+%if %symexist(_otherSASSetupUsed_) = 1 %then %do;
+	%symdel _otherSASSetupUsed_;
+    %put %str(NOTE: Deleted _otherSASSetupUsed_);
 %end;
 %mend unpack;
 
