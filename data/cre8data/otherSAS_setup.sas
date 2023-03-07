@@ -28,6 +28,7 @@
 ***********************************************************************************************;
 
 /* Replace FILEPATH with the full path to your EPGXLM7 folder */
+
 %let path = FILENAME;
 
 *************************************************;
@@ -180,6 +181,12 @@ run;
 	      out=BigZip method="get";
 	   run;
 	   
+	   /* IF HTTP error then user might not have write access */
+	   %if &SYSERRORTEXT=Generic HTTP Client Error %then %do;
+              %put ERROR:Cannot write zip file to specified location;
+              %return;
+       %end;
+	   
 	   /*Successful download note to the log */
 	   %if &SYS_PROCHTTP_STATUS_CODE = 200 %then %do; 
 	      %let downloadzipfile=DOWNLOADING COURSE ZIP FILE FROM THE INTERNET;
@@ -209,7 +216,7 @@ run;
 ***************************************************************************;
 /* Unpack the zip file */
 options dlcreatedir;
-libname xx "%superq(path)";
+libname xx "%superq(path)"; /*????? why this ???? ask Mark */
 libname xx clear;
 
 /* Read the "members" (files) from the ZIP file */
