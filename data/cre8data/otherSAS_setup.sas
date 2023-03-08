@@ -26,7 +26,7 @@
 *    - This program will not run properly on z/OS. Only Windows, Linux and UNIX are supported.*;
 *      Values for PATH are CASE SENSITIVE.                                                    *;
 ***********************************************************************************************;
-*9:16*;
+*9:18*;
 /* Replace FILEPATH with the full path to your EPGXLM7 folder */
 
 %let path = FILENAME;
