@@ -87,7 +87,7 @@ run;
 
 * Create global and local macro variables *;
 %local rc fid fileref fnum memname big_zip big_zip_found data_zip data_zip_found url;
-%global cre8data_success path _otherSASSetupUsed_;
+%global cre8data_success path _otherSASSetupUsed_ outpath;
 %let cre8data_success=0;
 
 * URL to download the course zip file *;
