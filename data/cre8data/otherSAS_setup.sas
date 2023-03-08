@@ -182,10 +182,24 @@ run;
 	   run;
 	   
 	   /* IF HTTP error then user might not have write access */
-	   %if &SYSERRORTEXT=Generic HTTP Client Error %then %do;
-              %put ERROR:Cannot write zip file to specified location;
-              %return;
+	   %if %symexist(SYSERRORTEXT) = 1 %then %do;
+	   		%if &SYSERRORTEXT=Generic HTTP Client Error %then %do;
+            	%put ERROR: CANNOT WRITE TO SPECIFIED LOCATION;
+        	    %put ERROR- *********************************************************************; 
+        	    %put ERROR- Cannot write to the specified location:;
+        	    %put ERROR- %superq(unzip);
+        	    %put ERROR- The location most likely has write access only. Please specify another location.;
+        	    %put ERROR- *********************************************************************; 
+        	    %put ERROR- If you are running a remote SAS server and you do not have write access,;
+        	    %put ERROR- please speak with your administrator for a location to use.;
+        	    %put ERROR- Or you can use the provided SAS virtual lab or sign up for;
+        	    %put ERROR- SAS OnDemand for Academics for free access to SAS.;
+              	%put ERROR- *********************************************************************;  
+            	%symdel SYSERRORTEXT;
+              	%return;
+       		%end;
        %end;
+	   
 	   
 	   /*Successful download note to the log */
 	   %if &SYS_PROCHTTP_STATUS_CODE = 200 %then %do; 
