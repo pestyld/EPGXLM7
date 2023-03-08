@@ -183,7 +183,7 @@ run;
 	   
 	   /* IF HTTP error then user might not have write access */
 	   %if %symexist(SYSERRORTEXT) = 1 %then %do;
-	   		%if &SYSERRORTEXT=Generic HTTP Client Error %then %do;
+	   		%if &SYSERRORTEXT=%str(Generic HTTP Client Error) %then %do;
             	%put ERROR: CANNOT WRITE TO SPECIFIED LOCATION;
         	    %put ERROR- *********************************************************************; 
         	    %put ERROR- Cannot write to the specified location:;
