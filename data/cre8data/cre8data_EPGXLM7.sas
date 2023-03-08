@@ -513,3 +513,6 @@ run;
 	%put NOTE- The following path is used: &path;
 	%put NOTE- ***********************************;
 %end;
+%put NOTE: MACRO VARIABLES CREATED;
+%put NOTE- &=outpath;
+%put NOTE- &=path;
