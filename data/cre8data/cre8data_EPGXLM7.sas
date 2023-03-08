@@ -42,7 +42,9 @@
 * If it is not set, assume a virtual lab is being used and set path to s:/workshop.              *;                                                      *;
 **************************************************************************************************;
 
-%macro PathMacroVariable;
+%macro PathMacroVariable();
+
+%global path;
 
 /* Check to see if the otherSAS_setup.sas program was used to unpack the course files in the user's environment. */
 %if %symexist(_otherSASSetupUsed_) = 1 %then %do;
@@ -54,7 +56,7 @@
 	%put NOTE- &path;
 	%put NOTE- ***********************************************************************************;
 %end;
-%else %if %symexist(path) = 0 %then %do; /* If the path is not set, assume it's a virtual lab environment s:/workshop */
+%else %if %length(&path) = 0 %then %do; /* If the path empty, assume it's a virtual lab environment s:/workshop */
 	%let path = S:/workshop;
 	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB BY DEFAULT;
 	%put NOTE- ***********************************************************************************;
@@ -103,9 +105,12 @@
 	%put NOTE- ***********************************************************************************;
 %end;
 
+%put &=path;
 %mend;
-%PathMacroVariable
-;
+
+%PathMacroVariable()
+
+
 
 
 /* *************************************************; */
