@@ -58,15 +58,16 @@
 %end;
 %else %if %length(&path) = 0 %then %do; /* If the path empty, assume it's a virtual lab environment s:/workshop */
 	%let path = S:/workshop;
-	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB BY DEFAULT;
+	%put NOTE: PATH MACRO VARIABLE NOT FOUND, SET TO VIRTUAL LAB PATH BY DEFAULT;
 	%put NOTE- ***********************************************************************************;
 	%put NOTE- Path macro was variable not found.;
 	%put NOTE- Assuming course is being taken in a SAS virtual lab.;
 	%put NOTE- The path macro variable will be set to the s:/workshop folder.;
 	%put NOTE- This is the default folder for the SAS virtual lab.;	
+	%PUT NOTE- If this is not correct and your course is setup. Please run libname.sas first.;
 	%put NOTE- ***********************************************************************************;
 %end;
-%else %do; /* If the path macro variable is already set from the setup program or libname.sas program, keep it. */
+%else %do; /* If the path macro variable is already set from the libname.sas program, use that path. */
 	%put NOTE: PATH MACRO VARIABLE FOUND;
 	%put NOTE- ***********************************************************************************;
 	%put NOTE- The path macro variable was found.;
@@ -511,13 +512,18 @@ run;
 
 **********************************;
 * Final notes                    *;
-**********************************;
-%if %symexist(_otherSASSetupUsed_) = 0 %then %do;
-	%put NOTE: PATH USED FOR THE COURSE;
+**********************************;	
+%macro finalNotes();
+	%put NOTE: NOTES FROM CRE8DATA PROGRAM;
+	%put NOTE- ****************************;
+	%put NOTE- PATH USED FOR THE COURSE;
+	%put NOTE- ***********************************;	
+	%put NOTE- &path;
 	%put NOTE- ***********************************;
-	%put NOTE- The following path is used: &path;
-	%put NOTE- ***********************************;
-%end;
-%put NOTE: MACRO VARIABLES CREATED;
-%put NOTE- &=outpath;
-%put NOTE- &=path;
+	%put NOTE- THE FOLLOWING MACRO VARIABLES WERE CREATED FROM LIBNAME.SAS;
+	%put NOTE- ************************************************************;
+	%put NOTE- &=outpath;
+	%put NOTE- &=path;
+	%put NOTE- ************************************************************;
+%mend;
+%finalNotes()
