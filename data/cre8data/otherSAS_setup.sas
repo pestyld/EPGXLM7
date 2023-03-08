@@ -26,7 +26,7 @@
 *    - This program will not run properly on z/OS. Only Windows, Linux and UNIX are supported.*;
 *      Values for PATH are CASE SENSITIVE.                                                    *;
 ***********************************************************************************************;
-
+*9:16*;
 /* Replace FILEPATH with the full path to your EPGXLM7 folder */
 
 %let path = FILENAME;
@@ -112,10 +112,11 @@ run;
    %put ERROR- Path specified to create files in (%superq(unzip)) is not valid.;
    %put ERROR- Will stop executing the program, please check the path you specified above.;
    %put ERROR- *************************************************************************************;
-   %put ERROR- Remember: PATH values in UNIX and LINUX are case sensitive. ;
-   %put ERROR- Remember: If you are on a remote SAS server, make sure to specify a path on the remote server.;
-   %put ERROR- Remember: If you are on a remote SAS server, you must have write access to the path specified.;
-   %put ERROR- Remember: Recheck the path. Make sure it is specified correctly. View the examples provided.;
+   %put ERROR- Possible Issues:;
+   %put ERROR-  - PATH values in UNIX and LINUX are case sensitive. ;
+   %put ERROR-  - If you are on a remote SAS server, make sure to specify a path on the remote server.;
+   %put ERROR-  - If you are on a remote SAS server, you must have write access to the path specified.;
+   %put ERROR-  - Recheck the path. Make sure it is specified correctly. View the examples provided.;
    %put ERROR- *************************************************************************************;
    %let rc=%sysfunc(filename(fileref));
    %return;
@@ -173,9 +174,13 @@ run;
       %return;
    %end;
    %else %do; /* Otherwise download the zip file to the specified path */
-	   filename BigZip "%superq(unzip)/%superq(zipfilename).zip";
+  
+  	   %put NOTE- **********************************************************;
+	   %put NOTE: Attempting to write downloaded zip file to specified path;
+	   %put NOTE- **********************************************************;
 	   
 	   /* Download the zip file and save it to the folder */
+	   filename BigZip "%superq(unzip)/%superq(zipfilename).zip";
 	   proc http 
 	      url="%superq(url)"
 	      out=BigZip method="get";
@@ -191,8 +196,8 @@ run;
         	    %put ERROR- The location most likely has write access only. Please specify another location.;
         	    %put ERROR- *********************************************************************; 
         	    %put ERROR- If you are running a remote SAS server and you do not have write access,;
-        	    %put ERROR- please speak with your administrator for a location to use.;
-        	    %put ERROR- Or you can use the provided SAS virtual lab or sign up for;
+        	    %put ERROR- please speak with your administrator for a location to use. If that is not;
+        	    %put ERROR- possible, you can use the provided SAS virtual lab or sign up for;
         	    %put ERROR- SAS OnDemand for Academics for free access to SAS.;
               	%put ERROR- *********************************************************************;  
             	%symdel SYSERRORTEXT;
